@@ -30,7 +30,8 @@ const VolunteerSchema = new Schema({
     },
 
     totalActivities : {
-        type : Number
+        type : Number,
+        default : 0
     },
 
     year : {
