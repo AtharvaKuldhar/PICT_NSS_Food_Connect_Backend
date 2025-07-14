@@ -6,14 +6,20 @@ const approve = async (req, res) => {
     const d = await Donation.findOne({ _id: donationid });  // Use only the donation ID for querying
 
     if (!d) {
-        return res.status(404).json({ message: "Donation not found" });
+        return res.status(404).json({
+            success : false,
+            message : ["Donation not found !"]
+        });
     }
 
     const volunteerid = d.volunteerid;
     const vol = await Volunteer.findOne({ _id: volunteerid });
 
     if (!vol) {
-        return res.status(404).json({ message: "Volunteer does not exist" });
+        return res.status(404).json({
+            success : false,
+            message : ["Volunteer does not Exist !"]
+        });
     }
 
     // Update the donation status and volunteer credits
@@ -23,7 +29,10 @@ const approve = async (req, res) => {
     await d.save();  // Save the updated donation
     await vol.save();  // Save the updated volunteer
 
-    return res.status(200).json({ message: "Request Approved" });
+    return res.status(200).json({
+            success : true,
+            message : ["Request approved !"]
+        });
 };
 
 export { approve };

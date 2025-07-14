@@ -107,7 +107,7 @@ import bcrypt from "bcrypt";  // Ensure bcrypt is imported for password hashing
 
 const admingenerateAccessToken = async function () {
     const payload = {
-        role: "Admin",
+        userType: 0,
     };
     return jwt.sign(
         payload, 
@@ -121,10 +121,16 @@ const admingenerateAccessToken = async function () {
 const handleLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     if (!email) {
-        return res.status(400).send("Email not found");
+        return res.status(400).json({
+            success : false,
+            message : ["Email not found !"]
+        });
     }
     if (!password) {
-        return res.status(400).send("Password not found");
+        return res.status(400).json({
+            success : false,
+            message : ["Re-Enter Password !"]
+        });
     }
 
     if (email === "admin@foodconnect.com") {
@@ -137,21 +143,27 @@ const handleLogin = asyncHandler(async (req, res) => {
                 credentials: true,
             };
             return res.cookie("access_token", access_token, options).status(200).json({
-                role: "admin",
-                message: "Login successful",
+                success : true,
+                message: ["Login successful"]
             });
         } else {
-            return res.status(404).send("Invalid credentials");
+            return res.status(404).json({
+                success : false,
+                message: ["Login unsuccessful"]
+            });
         }
     }
 
     const user = await Volunteer.findOne({ email });
     if (!user) {
-        return res.status(401).send("Credentials not found");
+        return res.status(401).json({
+                success : true,
+                message: ["User not found !"]
+            });
     }
 
     if (await user.matchPassword(password)) {
-        const access_token = await user.generateAccessToken("volunteer");
+        const access_token = await user.generateAccessToken(1);
         console.log(access_token);
         const options = {
             secure: process.env.NODE_ENV === "production",  // Secure in production
@@ -159,11 +171,14 @@ const handleLogin = asyncHandler(async (req, res) => {
             credentials: true,
         };
         return res.cookie("access_token", access_token, options).status(200).json({
-            role: "volunteer",
-            message: "Login successful",
+            success : true,
+            message: ["Login successful"]
         });
     } else {
-        return res.status(404).send("Incorrect credentials");
+        return res.status(404).json({
+                success : false,
+                message: ["Incorrect Credentials"]
+            });
     }
 });
 
@@ -172,15 +187,25 @@ const handleRegister = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!email) {
-        return res.status(400).send("Email not found");
+        return res.status(400).json({
+                success : false,
+                message: ["Email not found"]
+            });
     }
     if (!password) {
-        return res.status(400).send("Password not found");
+        return res.status(400).json({
+                success : false,
+                message: ["Enter password"]
+            });
     }
 
     const volunteer = await Volunteer.findOne({ email });
     if (volunteer) {
-        return res.status(409).send("User already exists");
+        console.log("user exists");
+        return res.status(409).json({
+                success : false,
+                message: ["user already Exists"]
+            });
     }
 
     const hashedPassword = await bcrypt.hash(password.trim(), 10); // Hash the password
@@ -191,7 +216,10 @@ const handleRegister = asyncHandler(async (req, res) => {
     });
 
     console.log("New volunteer successfully created");
-    return res.status(200).send("New volunteer successfully created");
+    return res.status(200).json({
+                success : true,
+                message: ["New Volunteer successfully created"]
+            });
 });
 
 export { handleLogin, handleRegister };

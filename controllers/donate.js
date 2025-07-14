@@ -22,9 +22,15 @@ const donate = async(req,res) => {
         quantity : quantity,
         imgurl : imgurl
     })
-
-    await newdonation.save();
-    return res.status(201).json({ message: "Donation request sent successfully" });
+    try{
+        await newdonation.save();
+        return res.status(201).json({
+                success : true,
+                message : ["Donation request sent successfully !"]
+            });
+    } catch(e){
+        console.log(e);
+    }
 
 }
 

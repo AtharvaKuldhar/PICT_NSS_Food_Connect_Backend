@@ -6,10 +6,18 @@ const getactivities = async(req,res) => {
     const completed = await Donation.find({volunteerid : v,status : "completed"});
 
     if(pending.length === 0 && completed.length === 0){
-        return res.status(200).json(({message : "No Activities"}));
+        return res.status(200).json({
+            success : true,
+            message : ["No Activities"]
+        });
     }
 
-    res.status(200).json([pending, completed]);
+    res.status(200).json({
+            success : true,
+            message : ["data sent"],
+            pending,
+            completed
+        });
 
 }
 

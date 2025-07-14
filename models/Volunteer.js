@@ -59,7 +59,7 @@ VolunteerSchema.methods.matchPassword = async function(enteredPassword){
 VolunteerSchema.methods.generateAccessToken = async function (userRole) {
     const payload = {
         _id: this._id,
-        role: userRole,
+        userType: userRole,
         name: this.name,
         email: this.email,
     };
