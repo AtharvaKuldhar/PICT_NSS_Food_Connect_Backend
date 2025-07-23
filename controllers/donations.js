@@ -1,4 +1,4 @@
-import Donation from "../models/Donation";
+import Donation from "../models/Donation.js";
 
 const getdonations = async(req, res) => {
     const donations = await Donation.find();
