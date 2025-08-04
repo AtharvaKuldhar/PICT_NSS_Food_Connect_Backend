@@ -139,7 +139,7 @@ const handleLogin = asyncHandler(async (req, res) => {
             console.log(access_token);
             const options = {
                 secure: process.env.NODE_ENV === "production",  // Use secure cookies in production
-                httpOnly: true,  // It's a good practice to keep the cookie httpOnly to prevent XSS
+                httpOnly: false,  // Allow JavaScript access for frontend
                 credentials: true,
             };
             return res.cookie("access_token", access_token, options).status(200).json({
@@ -167,7 +167,7 @@ const handleLogin = asyncHandler(async (req, res) => {
         console.log(access_token);
         const options = {
             secure: process.env.NODE_ENV === "production",  // Secure in production
-            httpOnly: true,  // HttpOnly cookie for security
+            httpOnly: false,  // Allow JavaScript access for frontend
             credentials: true,
         };
         return res.cookie("access_token", access_token, options).status(200).json({
@@ -184,7 +184,7 @@ const handleLogin = asyncHandler(async (req, res) => {
 
 // Register complete
 const handleRegister = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, enrollmentNumber, year } = req.body;
 
     if (!email) {
         return res.status(400).json({
@@ -196,6 +196,12 @@ const handleRegister = asyncHandler(async (req, res) => {
         return res.status(400).json({
                 success : false,
                 message: ["Enter password"]
+            });
+    }
+    if (!name) {
+        return res.status(400).json({
+                success : false,
+                message: ["Name not found"]
             });
     }
 
@@ -213,6 +219,9 @@ const handleRegister = asyncHandler(async (req, res) => {
         name,
         email: email.trim().toLowerCase(),  // Normalize email
         password: hashedPassword,
+        enrollmentNumber: enrollmentNumber || undefined,
+        year: year || undefined,
+        joiningDate: new Date()
     });
 
     console.log("New volunteer successfully created");
@@ -222,5 +231,19 @@ const handleRegister = asyncHandler(async (req, res) => {
             });
 });
 
-export { handleLogin, handleRegister };
+// Logout function
+const handleLogout = asyncHandler(async (req, res) => {
+    res.clearCookie("access_token", {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
+    });
+    
+    return res.status(200).json({
+        success: true,
+        message: ["Logged out successfully"]
+    });
+});
+
+export { handleLogin, handleRegister, handleLogout };
 

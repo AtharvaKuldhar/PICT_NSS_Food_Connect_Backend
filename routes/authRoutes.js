@@ -4,13 +4,14 @@ import { sendrole } from "../controllers/sendrole.js";
 import {
     handleLogin,
     handleRegister,
+    handleLogout,
 } from "../controllers/authControllers.js";
 
 const router = Router();
 
 router.route("/login").post(handleLogin);
 router.route("/register").post(handleRegister);
+router.route("/logout").post(handleLogout);
 router.route("/me").get(verifyJWT, sendrole);
-
 
 export default router;

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo Hello",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "author": "Atharva Kuldhar, Lakshminarayan Chatla",
   "license": "ISC",
